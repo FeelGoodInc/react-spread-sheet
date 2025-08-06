@@ -176,6 +176,7 @@ const Input = (props: Prop) => {
     };
     return (
       <input
+        autoComplete='off'
         key={`${i}-${j}-${type}`}
         {...baseProps}
         type={type}

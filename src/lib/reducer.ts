@@ -2,7 +2,11 @@ import { generateColumns } from "./list/utils";
 
 export type Selected = [number, number];
 
-export interface Data {
+export interface AnyObject {
+  [name: string]: any
+};
+
+export interface Data extends AnyObject {
   value: string;
   styles?: { [key: string]: string };
   type?: string;

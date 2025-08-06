@@ -5,6 +5,10 @@
   padding: 0px 4px;
 }
 
+.sheet-table {
+  font-family: "Inter", Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
 .sheet-table,
 .sheet-table table {
   height: 100%;
@@ -47,6 +51,7 @@
 .sheet-table td {
   border: none;
   padding: 0 0;
+  position: relative;
 }
 
 .sheet-table .sheet-x-axis {
@@ -59,7 +64,7 @@
   width: auto;
   height: auto;
   min-width: 50px;
-  width: 100px;
+  width: 100%;
 }
 
 .sheet-table td,
@@ -121,8 +126,8 @@
 }
 .sheet-table .sheet-tools {
   background-color: #f3f5f8;
-  padding: 8px 15px;
-  border-radius: 8px;
+  padding: 8px 0;
+  border-radius: 6px;
   display: flex;
   align-items: center;
 }
@@ -158,10 +163,11 @@
   box-shadow: none;
   outline: none;
 }
-.sheet-table .sheet-tools .sheet-tools-font-size-container {
-  margin-left: 15px;
-  margin-right: 15px;
-  border-left: 1px solid #e1e1e1;
+.sheet-table .sheet-tools .sheet-tools-text-style-container,
+.sheet-table .sheet-tools .sheet-tools-font-size-container,
+.sheet-table .sheet-tools .sheet-tools-text-cell-color-container,
+.sheet-table .sheet-tools .sheet-tools-text-align-container {
+  padding: 0 8px;
   border-right: 1px solid #e1e1e1;
 }
 .sheet-table .sheet-tools .sheet-tools-font-size-container button {
@@ -189,13 +195,7 @@
   -webkit-appearance: none;
   margin: 0;
 }
-.sheet-table .sheet-tools .sheet-tools-text-style-container {
-  margin-left: 7px;
-  margin-right: 15px;
-  border-left: 1px solid #e1e1e1;
-  border-right: 1px solid #e1e1e1;
-  padding: 0px 3px;
-}
+
 .sheet-table .sheet-tools .sheet-tools-text-style-container button {
   border: none;
   outline: none;
@@ -207,6 +207,9 @@
   border-radius: 4px;
   margin: 0px 2px;
   min-width: 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .sheet-table .sheet-tools-container .sheet-tools button.text-style-btn-active {
   background-color: #e1e1e1;
@@ -230,7 +233,7 @@
   margin: 0px 2px;
   min-width: 21px;
   display: flex;
-  align-items: center;
+  align-items: center;  
 }
 .sheet-tools-text-cell-color-container input {
   opacity: 0;
@@ -284,6 +287,7 @@
   cursor: pointer;
   transition: background-color 0.2s;
   user-select: none;
+  font-size: 13px;
 }
 .sheet-table .sheet-context-menu-item:hover {
   background-color: #f5f5f5;

@@ -1,17 +1,25 @@
-import React, { memo } from "react";
+import React, {
+  type ReactNode,
+  memo
+}                                from "react";
 import { store, useAppSelector } from "../store";
-import Cell from "./cell";
-import ReadOnlyCell from "./readonlycell";
-import { selectHorizontalCells } from "../reducer";
+import Cell                      from "./cell";
+import ReadOnlyCell              from "./readonlycell";
+import {
+  type Data,
+  selectHorizontalCells
+}                                from "../reducer";
 interface Prop {
   i: number;
   onChange?(i: number, j: number, value: string): void;
   hideYAxisHeader?: boolean;
   readonly?: boolean;
   headerValues?: string[];
+  injectedCellComponent?: (value: Data) => ReactNode;
 }
+
 const Row = (props: Prop) => {
-  const { i } = props;
+  const { i, injectedCellComponent } = props;
   const itemLength = useAppSelector(store, (state) => state.data[i]?.length || 0);
   const items = [];
   for (let j = 0; j < itemLength; j++) {
@@ -25,6 +33,7 @@ const Row = (props: Prop) => {
           j={j}
           onChange={props.onChange}
           headerValues={props.headerValues}
+          injectedCellComponent={injectedCellComponent}
         />
       ),
     );

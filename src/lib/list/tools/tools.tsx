@@ -6,13 +6,18 @@ import { changeData, mergeCells, redo, undo } from "../../reducer";
 let timer: string | number | NodeJS.Timeout | undefined;
 const emptyObject = {};
 const notSelectedIndex = [undefined, undefined];
-const Tools = ({
-  changeStyle,
-  onChange,
-}: {
+
+type ToolsProps = {
+  showFX?: boolean;
   changeStyle: (type: string, val?: string) => void;
   onChange: ((i?: number, j?: number, value?: string) => void) | undefined;
-}) => {
+}
+
+const Tools = ({
+  showFX = false,
+  changeStyle,
+  onChange,
+}: ToolsProps) => {
   const calculationRef = useRef<HTMLInputElement>(null);
   const fontColorRef = useRef<HTMLInputElement>(null);
   const backgroundColorRef = useRef<HTMLInputElement>(null);
@@ -59,25 +64,28 @@ const Tools = ({
   return (
     <div className="sheet-tools-container">
       <div className="sheet-tools">
-        <div
-          className="sheet-tools-calculation-input-container"
-          data-testid="sheet-tools-calculation-input-container"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            calculationRef.current?.focus();
-          }}
-        >
-          fx
-          <input
-            data-testid="fx-input"
-            ref={calculationRef}
-            value={selectedItemVal}
-            type={type === "number" ? "number" : "text"}
-            readOnly={i === undefined || j === undefined || !["text", "number"].includes(type)}
-            onChange={onValChange}
-          />
-        </div>
+        {showFX && (
+          <div
+            className="sheet-tools-calculation-input-container"
+            data-testid="sheet-tools-calculation-input-container"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              calculationRef.current?.focus();
+            }}
+          >
+            fx
+            <input
+              data-testid="fx-input"
+              ref={calculationRef}
+              value={selectedItemVal}
+              type={type === "number" ? "number" : "text"}
+              readOnly={i === undefined || j === undefined || !["text", "number"].includes(type)}
+              onChange={onValChange}
+            />
+          </div>
+        )}
+        
         <div className="sheet-tools-text-style-container">
           <button
             data-testid="undo-button-tools"

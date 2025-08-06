@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Icons from "../svg/icons";
 import {
+  type ListReducer,
   addColumn,
   addRow,
   deleteColumn,
@@ -10,9 +11,17 @@ import {
 } from "../reducer";
 import { store } from "../store";
 
-interface ContextMenuProps {
+type ContextMenuCustomAction = {
+  id: string;
+  text: string;
+  visibilityCondition?: (state: ListReducer) => boolean;
+  onClick: () => void;
+};
+
+export interface ContextMenuProps {
   x: number;
   y: number;
+  customActions?: ContextMenuCustomAction[];
   onClose: () => void;
   copyToClipBoard: () => void;
   cutItemsToClipBoard: () => void;
@@ -23,6 +32,7 @@ interface ContextMenuProps {
 const ContextMenu: React.FC<ContextMenuProps> = ({
   x,
   y,
+  customActions = [],
   onClose,
   copyToClipBoard,
   cutItemsToClipBoard,
@@ -32,7 +42,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const [showSubmenu, setShowSubmenu] = useState<
     "input-type" | "add-row" | "add-column" | undefined
   >();
-  const { dispatch } = store;
+  const { dispatch, getState } = store;
+  
   const handleCut = () => {
     cutItemsToClipBoard();
     onClose();
@@ -95,17 +106,17 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       }}
     >
       <div className="sheet-context-menu-item" role="menuitem" onClick={handleCut}>
-        Cut
+        Вырезать
       </div>
       <div className="sheet-context-menu-item" role="menuitem" onClick={handleCopy}>
-        Copy
+        Копировать
       </div>
       <div className="sheet-context-menu-item" role="menuitem" onClick={handlePaste}>
-        Paste
+        Вставить
       </div>
       <div className="sheet-context-menu-divider"></div>
       <div className="sheet-context-menu-item" role="menuitem" onClick={() => mergeCell()}>
-        Merge cells
+        Объединить ячейки
       </div>
       <div className="sheet-context-menu-divider"></div>
       <div
@@ -114,7 +125,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         onMouseEnter={() => setShowSubmenu("input-type")}
         onMouseLeave={() => setShowSubmenu(undefined)}
       >
-        Input Type <Icons type="right-arrow" />
+        Тип поля <Icons type="right-arrow" />
         {showSubmenu === "input-type" && (
           <div className="sheet-context-submenu">
             {inputTypes.map((type) => (
@@ -137,7 +148,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         onMouseEnter={() => setShowSubmenu("add-row")}
         onMouseLeave={() => setShowSubmenu(undefined)}
       >
-        Add Row <Icons type="right-arrow" />
+        Добавить строку <Icons type="right-arrow" />
         {showSubmenu === "add-row" && (
           <div className="sheet-context-submenu">
             <div
@@ -148,7 +159,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 onClose();
               }}
             >
-              Above
+              Выше
             </div>
             <div
               className="sheet-context-menu-item"
@@ -158,7 +169,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 onClose();
               }}
             >
-              Below
+              Ниже
             </div>
           </div>
         )}
@@ -169,7 +180,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         onMouseEnter={() => setShowSubmenu("add-row")}
         onMouseLeave={() => setShowSubmenu(undefined)}
       >
-        Add Column <Icons type="right-arrow" />
+        Добавить столбец <Icons type="right-arrow" />
         {showSubmenu === "add-row" && (
           <div className="sheet-context-submenu">
             <div
@@ -180,7 +191,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 onClose();
               }}
             >
-              Right
+              Справа
             </div>
             <div
               className="sheet-context-menu-item"
@@ -190,7 +201,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 onClose();
               }}
             >
-              Left
+              Слева
             </div>
           </div>
         )}
@@ -203,7 +214,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           onClose();
         }}
       >
-        Delete Row
+        Удалить строку
       </div>
       <div
         className="sheet-context-menu-item"
@@ -213,8 +224,28 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           onClose();
         }}
       >
-        Delete Column
+        Удалить столбец
       </div>
+
+      {customActions instanceof Array && customActions.map(action => {
+        const { visibilityCondition = () => true } = action;
+
+        return visibilityCondition(getState()) && (
+          <div
+            key={action.id}
+            className="sheet-context-menu-item"
+            role="menuitem"
+            onClick={() => {
+              if (action.onClick instanceof Function) {
+                action.onClick()
+              }
+              onClose();
+            }}
+          >
+            {action.text}
+          </div>
+        )
+      })}
     </div>
   );
 };

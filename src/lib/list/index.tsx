@@ -1,7 +1,14 @@
-import React, { memo, useEffect, useRef, useState } from "react";
-import { store, useAppSelector } from "../store";
-import Row from "./row";
+import React, {
+  type ReactNode,
+  memo,
+  useEffect,
+  useRef,
+  useState
+}                                               from "react";
+import { store, useAppSelector }                from "../store";
+import Row                                      from "./row";
 import {
+  type Data,
   addData,
   addRows,
   bulkUpdate,
@@ -11,15 +18,19 @@ import {
   selectAllCells,
   undo,
   updateStyles,
-} from "../reducer";
-import SheetXAxis from "./sheet-x-axis";
-import { generateDummyContent, getItemsToCopy } from "./utils";
-import Tools from "./tools/tools";
-import ContextMenu from "./context-menu";
+}                                               from "../reducer";
+import SheetXAxis                               from "./sheet-x-axis";
+import {
+  generateDummyContent,
+  getItemsToCopy
+}                                               from "./utils";
+import Tools                                    from "./tools/tools";
+import ContextMenu, {
+  type ContextMenuProps
+}                                               from "./context-menu";
 
 export interface Props {
-  data?: any[][];
-  onChange?(i?: number, j?: number, value?: string): void;
+  data?: any[][];  
   resize?: boolean;
   hideXAxisHeader?: boolean;
   hideYAxisHeader?: boolean;
@@ -27,9 +38,30 @@ export interface Props {
   readonly?: boolean;
   hideTools?: boolean;
   autoAddAdditionalRows?: boolean;
+  initialColumnsCount?: number;
+  initialRowsCount?: number;
+  contextMenuCustomActions?: ContextMenuProps['customActions'];
+  showFXTool?: boolean;
+  injectedCellComponent?: (value: Data) => ReactNode;
+  onChange?(i?: number, j?: number, value?: string): void;
 }
 
-const List = (props: Props) => {
+const List = ({
+  data,
+  resize,
+  hideXAxisHeader,
+  hideYAxisHeader,
+  headerValues,
+  readonly,
+  hideTools,
+  autoAddAdditionalRows = true,
+  initialColumnsCount = 20,
+  initialRowsCount = 50,
+  contextMenuCustomActions = [],
+  showFXTool = false,
+  injectedCellComponent,
+  onChange,
+}: Props) => {
   const { dispatch } = store;
   const itemLength = useAppSelector(store, (state) => state.data.length);
   const divRef = useRef<HTMLDivElement>(null);
@@ -38,17 +70,6 @@ const List = (props: Props) => {
 
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [initialItemLength, setInitialItemLength] = useState(itemLength);
-  const {
-    data,
-    onChange,
-    resize,
-    hideXAxisHeader,
-    hideYAxisHeader,
-    headerValues,
-    readonly,
-    hideTools,
-    autoAddAdditionalRows = true,
-  } = props;
 
   useEffect(() => {
     if (j !== 0 && itemLength > initialItemLength) {
@@ -69,7 +90,7 @@ const List = (props: Props) => {
                 ? generateDummyContent(300, data[0].length)
                 : []),
             ]
-          : generateDummyContent(1000, 30),
+          : generateDummyContent(initialRowsCount, initialColumnsCount),
     });
   }, []);
 
@@ -83,6 +104,7 @@ const List = (props: Props) => {
         onChange={onChange}
         hideYAxisHeader={hideYAxisHeader}
         readonly={readonly}
+        injectedCellComponent={injectedCellComponent}
       />,
     );
   }
@@ -119,6 +141,7 @@ const List = (props: Props) => {
       try {
         const val = JSON.parse(v);
         if (Array.isArray(val) && val.length > 0 && val[0].index?.length === 2 && selected.length) {
+          console.log(val)
           dispatch(bulkUpdate, { payload: val });
           onChange && onChange();
         } else {
@@ -217,7 +240,14 @@ const List = (props: Props) => {
 
   return (
     <div onKeyDown={handleKeyDown} className="sheet-table" data-testid="sheet-table" tabIndex={0}>
-      {!hideTools && <Tools changeStyle={changeStyle} onChange={onChange} />}
+      {!hideTools && (
+        <Tools
+          changeStyle={changeStyle}
+          onChange={onChange}
+          showFX={showFXTool}
+        />
+      )}
+
       <div
         className="sheet-table-table-container"
         ref={parentDivRef}
@@ -241,10 +271,12 @@ const List = (props: Props) => {
           </div>
         </div>
       </div>
+
       {contextMenu && (
         <ContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
+          customActions={contextMenuCustomActions}
           copyToClipBoard={copyToClipBoard}
           cutItemsToClipBoard={cutItemsToClipBoard}
           pasteFromClipBoard={pasteFromClipBoard}

@@ -2,22 +2,11 @@ import React, { useRef, useState } from "react";
 import Sheet, { SheetRef } from "../lib";
 import packageConf from "../../package.json";
 import { importFromXlsx, exportToXlsx } from "./xlsxUtils";
+import { MOCK_DATA } from './matrix';
 import "./demo.css";
-//Create dummy data.
-const createData = () => {
-  const val: any[][] = [];
-  for (let i = 0; i < 1000; i++) {
-    val.push(
-      Array.from({ length: 40 }, () => ({
-        value: Math.floor(Math.random() * 10),
-      })),
-    );
-  }
-  return val;
-};
 
 function App() {
-  const [state] = useState<any[][]>(createData());
+  const [state] = useState<any[][]>(MOCK_DATA);
   const childRef = useRef<SheetRef>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const onChange = (i: number, j: number, value: string) => {
@@ -70,7 +59,74 @@ function App() {
       </div>
       <div style={{ height: "10px", flex: "1 1 10px" }}>
         {/* Data is optional, if data is empty it will render empty input boxes */}
-        <Sheet data={state} onChange={onChange} ref={childRef} resize={true} />
+        <Sheet
+          autoAddAdditionalRows={false}
+          onChange={onChange}
+          ref={childRef}
+          resize
+          // injectedCellComponent={(value) => {
+          //   console.log(value);
+          //   return value.selectable && (
+          //     <div style={{position: 'absolute', top: 0, right: 0, zIndex: 2}}>
+          //       {value.value}
+          //     </div>
+          //   )
+          // }}
+          // contextMenuCustomActions={[
+          //   {
+          //     id: 'markAsValues',
+          //     text: 'Пометить как область значений',              
+          //     onClick: () => {
+          //       if (childRef.current) {
+          //         const { getSelected, packUpdate, getOneCell } = childRef.current;
+          //         const selected = getSelected();
+                  
+          //         if (selected) {
+          //           packUpdate(
+          //             selected.map(item => {
+          //               const [ row, col ] = item;
+          //               const cellData = getOneCell(row, col);
+
+          //               return {
+          //                 index: item,
+          //                 data: { ...cellData, selectable: true }
+          //               }
+          //             })
+          //           )
+          //         }
+          //       }
+          //     }
+          //   },
+          //   {
+          //     id: 'setValue',
+          //     text: 'Задать значение',
+          //     visibilityCondition: (state): boolean => {
+          //       if (childRef.current) {
+          //         const { getOneCell } = childRef.current;
+          //         let isAllSelectedCellsSelectable = true;
+
+          //         for (const selected of state.selected) {
+          //           const [ row, col ] = selected;
+          //           const { selectable } = getOneCell(row, col);
+
+          //           if (!selectable) {
+          //             isAllSelectedCellsSelectable = false;
+
+          //             break;
+          //           }
+          //         }
+
+          //         return isAllSelectedCellsSelectable;
+          //       }
+
+          //       return false;
+          //     },
+          //     onClick: () => {
+          //       console.log('custom action click')
+          //     }
+          //   }
+          // ]}
+        />
       </div>
     </div>
   );
