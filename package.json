@@ -56,7 +56,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "rm -rf build && rollup -c",
+    "build": "rollup -c",
     "test": "react-scripts test --watchAll --coverage --no-cache",
     "test:ci": "CI=true react-scripts test --coverage --no-cache",
     "eject": "react-scripts eject",
