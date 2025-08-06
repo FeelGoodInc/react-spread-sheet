@@ -67,7 +67,6 @@ const List = ({
   const divRef = useRef<HTMLDivElement>(null);
   const parentDivRef = useRef<HTMLDivElement>(null);
   const [j, setJ] = useState(0);
-
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [initialItemLength, setInitialItemLength] = useState(itemLength);
 
@@ -78,7 +77,7 @@ const List = ({
       setJ(itemLength < 300 ? itemLength : 300);
     }
     setInitialItemLength(itemLength);
-  }, [itemLength]);
+  }, [itemLength, initialItemLength]);
 
   useEffect(() => {
     dispatch(addData, {
