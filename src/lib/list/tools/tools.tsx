@@ -26,26 +26,26 @@ const Tools = ({
   const selectedStyles = useAppSelector(store, (state) => {
     const index = state.selected[0];
     if (index) {
-      return state.data[index[0]][index[1]].styles || emptyObject;
+      return state.data[index[0]][index[1]]?.styles || emptyObject;
     }
     return emptyObject;
   });
   const type = useAppSelector(store, (state) => {
     const index = state.selected[0];
     if (index) {
-      return state.data[index[0]][index[1]].type || "text";
+      return state.data[index[0]][index[1]]?.type || "text";
     }
     return "";
   });
   const selectedItemVal = useAppSelector(
     store,
-    (state) => state.data[state.selected?.[0]?.[0]]?.[state.selected?.[0]?.[1]].value || "",
+    (state) => state.data[state.selected?.[0]?.[0]]?.[state.selected?.[0]?.[1]]?.value || "",
   );
 
   const rowSpan = useAppSelector(
     store,
     (state) =>
-      state.data[state.selected?.[0]?.[0]]?.[state.selected?.[0]?.[1]].rowSpan || undefined,
+      state.data[state.selected?.[0]?.[0]]?.[state.selected?.[0]?.[1]]?.rowSpan || undefined,
   );
 
   const selectedFontSize = selectedStyles?.["fontSize"]
