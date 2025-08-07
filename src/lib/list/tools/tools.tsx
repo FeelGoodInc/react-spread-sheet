@@ -22,18 +22,19 @@ const Tools = ({
   const fontColorRef = useRef<HTMLInputElement>(null);
   const backgroundColorRef = useRef<HTMLInputElement>(null);
   const { dispatch } = store;
-  const [i, j] = useAppSelector(store, (state) => state.selected[0] || notSelectedIndex);
+  const [i, j] = useAppSelector(store, (state) => state.selected?.[0] || notSelectedIndex);
   const selectedStyles = useAppSelector(store, (state) => {
-    const index = state.selected[0];
+    const index = state.selected?.[0];
+    
     if (index) {
-      return state.data[index[0]][index[1]]?.styles || emptyObject;
+      return (state.data?.[index[0]] || [])[index[1]]?.styles || emptyObject;
     }
     return emptyObject;
   });
   const type = useAppSelector(store, (state) => {
-    const index = state.selected[0];
+    const index = state.selected?.[0];
     if (index) {
-      return state.data[index[0]][index[1]]?.type || "text";
+      return (state.data[index[0]] || [])[index[1]]?.type || "text";
     }
     return "";
   });
